@@ -47,9 +47,10 @@
             this.labStatus = new System.Windows.Forms.Label();
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.cmsTray = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.exchargeList = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmtShow = new System.Windows.Forms.ToolStripMenuItem();
+            this.exchargeList = new System.Windows.Forms.ToolStripMenuItem();
             this.tbeName = new HostSwitch.Controls.TextBoxEdit();
+            this.tsmtOut = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.gvList)).BeginInit();
             this.cmsTray.SuspendLayout();
             this.SuspendLayout();
@@ -206,27 +207,29 @@
             this.trayIcon.ContextMenuStrip = this.cmsTray;
             this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
             this.trayIcon.Text = "Host管理器";
+            this.trayIcon.DoubleClick += new System.EventHandler(this.ShowWindow);
             // 
             // cmsTray
             // 
             this.cmsTray.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmtShow,
-            this.exchargeList});
+            this.exchargeList,
+            this.tsmtOut});
             this.cmsTray.Name = "cmsTray";
-            this.cmsTray.Size = new System.Drawing.Size(149, 48);
-            // 
-            // exchargeList
-            // 
-            this.exchargeList.Name = "exchargeList";
-            this.exchargeList.Size = new System.Drawing.Size(148, 22);
-            this.exchargeList.Text = "HOST切换(&E)";
+            this.cmsTray.Size = new System.Drawing.Size(153, 92);
             // 
             // tsmtShow
             // 
             this.tsmtShow.Name = "tsmtShow";
-            this.tsmtShow.Size = new System.Drawing.Size(148, 22);
-            this.tsmtShow.Text = "显示(&S)";
-            this.tsmtShow.Click += new System.EventHandler(this.tsmtShow_Click);
+            this.tsmtShow.Size = new System.Drawing.Size(152, 22);
+            this.tsmtShow.Text = "显示窗口(&S)";
+            this.tsmtShow.Click += new System.EventHandler(this.ShowWindow);
+            // 
+            // exchargeList
+            // 
+            this.exchargeList.Name = "exchargeList";
+            this.exchargeList.Size = new System.Drawing.Size(152, 22);
+            this.exchargeList.Text = "HOST切换(&E)";
             // 
             // tbeName
             // 
@@ -241,6 +244,13 @@
             this.tbeName.PlaceHolderMargin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.tbeName.Size = new System.Drawing.Size(623, 34);
             this.tbeName.TabIndex = 8;
+            // 
+            // tsmtOut
+            // 
+            this.tsmtOut.Name = "tsmtOut";
+            this.tsmtOut.Size = new System.Drawing.Size(152, 22);
+            this.tsmtOut.Text = "退出(&O)";
+            this.tsmtOut.Click += new System.EventHandler(this.tsmtOut_Click);
             // 
             // FrmMain
             // 
@@ -283,6 +293,7 @@
         private System.Windows.Forms.ContextMenuStrip cmsTray;
         private System.Windows.Forms.ToolStripMenuItem exchargeList;
         private System.Windows.Forms.ToolStripMenuItem tsmtShow;
+        private System.Windows.Forms.ToolStripMenuItem tsmtOut;
     }
 }
 

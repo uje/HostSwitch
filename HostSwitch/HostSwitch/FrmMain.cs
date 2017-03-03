@@ -18,7 +18,8 @@ namespace HostSwitch {
         HostService hostService;
         Operation currentOperation;
         HostInfo currentHost;
-        Regex regImport = new Regex("#@import (\\w+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        Regex regImport = new Regex(@"#@import ([^\r\n\s]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        Regex regUri = new Regex(@"http:\/\/.+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public FrmMain() {
             InitializeComponent();
@@ -34,6 +35,7 @@ namespace HostSwitch {
             var hostList = hostService.GetList();
             gvList.DataSource = hostList;
             gvList.Update();
+            exchargeList.DropDownItems.Clear();
 
             foreach (var host in hostList) {
                 exchargeList.DropDownItems.Add(host.FileName, null, delegate {
@@ -45,6 +47,12 @@ namespace HostSwitch {
         private void gvList_CellContentClick(object sender, DataGridViewCellEventArgs e) {
 
             var operation = gvList.Columns[gvList.CurrentCell.ColumnIndex].Name;
+
+            // 如果点击的是文件名称则不处理
+            if (operation == "FileName") {
+                return;
+            }
+
             var operationEnum = (Operation)Enum.Parse(typeof(Operation), operation);
             var host = new HostInfo(gvList.CurrentRow.Cells["FileName"].Value.ToString(),
                                     gvList.CurrentRow.Cells["FilePath"].Value.ToString());
@@ -78,28 +86,58 @@ namespace HostSwitch {
             var hostPath = Path.Combine(syst, "system32\\drivers\\etc\\hosts");
             var hostContent = File.ReadAllText(host.FilePath);
             IList<string> noExistModules = new List<string>();
+            IList<string> importModules = new List<string>();
             string msg = "操作成功！";
 
-            if (regImport.IsMatch(hostContent)) {
+            while(regImport.IsMatch(hostContent)) {
                 var matchList = regImport.Matches(hostContent);
 
                 foreach (Match m in matchList) {
                     var fileName = m.Result("$1");
-                    var filePath = hostService.BuildFilePath(fileName);
 
-                    if (File.Exists(filePath)) {
-                        hostContent = hostContent.Replace(m.Value, File.ReadAllText(filePath));
+                    // 已经加载的则不再加载一遍
+                    if (importModules.Contains(fileName)) {
+                        hostContent = hostContent.Replace(m.Value, "");
+                        continue;
+                    }
+
+                    // 如果import的模块是个uri则使用http抓取
+                    if (regUri.IsMatch(fileName)) {
+                        try {
+                            var content = HttpHelper.Get(fileName);
+                            hostContent = hostContent.Replace(m.Value, content);
+                        }
+                        catch (Exception ex) {
+                            noExistModules.Add(string.Format("{1}({0})", fileName, ex.Message));
+                        }
                     }
                     else {
-                        noExistModules.Add(fileName);
+                        var filePath = hostService.BuildFilePath(fileName);
+
+                        if (File.Exists(filePath)) {
+                            hostContent = hostContent.Replace(m.Value, File.ReadAllText(filePath));
+                        }
+                        else {
+                            noExistModules.Add(fileName);
+                        }
                     }
+
+                    importModules.Add(fileName);
                 }
             }
 
-            File.WriteAllText(hostPath, hostContent);
+            try {
+                File.SetAttributes(hostPath, FileAttributes.Normal);
+                File.WriteAllText(hostPath, hostContent);
+                File.SetAttributes(hostPath, FileAttributes.ReadOnly);
+            }
+            catch (Exception ex) {
+                MessageBox.Show("无法写入hosts文件，请去除hosts文件的只读属性！", "温馨提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            if (noExistModules.Count > 0) {
-                msg += string.Join("未找到\n", noExistModules.ToArray());
+            foreach (var name in noExistModules) {
+                msg += string.Format("\n未找到模块：{0}", name);
             }
 
             if (isSilence != true) {
@@ -149,16 +187,20 @@ namespace HostSwitch {
         }
 
         private void FrmMain_SizeChanged(object sender, EventArgs e) {
-            if(WindowState == FormWindowState.Minimized) {
-                this.Hide();
+            if (WindowState == FormWindowState.Minimized) {
+                this.Visible = false;
                 trayIcon.Visible = true;
             }
         }
 
-        private void tsmtShow_Click(object sender, EventArgs e) {
+        private void ShowWindow(object sender, EventArgs e) {
             trayIcon.Visible = false;
-            this.Show();
-            this.Activate();  
+            this.Visible = true;
+            this.WindowState = FormWindowState.Normal;
+        }
+
+        private void tsmtOut_Click(object sender, EventArgs e) {
+            Application.Exit();
         }
     }
 }

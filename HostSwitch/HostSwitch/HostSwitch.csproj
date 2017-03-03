@@ -59,14 +59,9 @@
       <DependentUpon>TextBoxEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\HostService.cs" />
+    <Compile Include="Core\HttpHelper.cs" />
     <Compile Include="Core\Operation.cs" />
     <Compile Include="ENV.cs" />
-    <Compile Include="FrmEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmEdit.Designer.cs">
-      <DependentUpon>FrmEdit.cs</DependentUpon>
-    </Compile>
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -79,9 +74,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Controls\TextBoxEdit.resx">
       <DependentUpon>TextBoxEdit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FrmEdit.resx">
-      <DependentUpon>FrmEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>

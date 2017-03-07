@@ -18,6 +18,8 @@ namespace HostSwitch {
         HostService hostService;
         Operation currentOperation;
         HostInfo currentHost;
+        string etcHostsPath;
+        string backupHosts;
         Regex regImport = new Regex(@"#@import ([^\r\n\s]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         Regex regUri = new Regex(@"http:\/\/.+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -26,9 +28,35 @@ namespace HostSwitch {
         }
 
         private void frmMain_Load(object sender, EventArgs e) {
+            var syst = Environment.GetEnvironmentVariable("windir");
+            etcHostsPath = Path.Combine(syst, "system32\\drivers\\etc\\hosts");
+            backupHosts = Path.Combine(Environment.CurrentDirectory, "originalBackup.host");
+
+            // 保存原始host
+            if (!File.Exists(backupHosts)) {
+                try { 
+                File.WriteAllText(backupHosts, File.ReadAllText(etcHostsPath));
+                }
+                catch (Exception ex) {
+                    MessageBox.Show(string.Format("备份Hosts失败：{0}", ex.Message), "温馨提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            
             currentOperation = Operation.CREATE;
             hostService = new HostService();
             refreshHostList();
+        }
+
+        private void RestoreHosts() {
+
+            try {
+                File.SetAttributes(etcHostsPath, FileAttributes.Normal);
+                File.WriteAllText(etcHostsPath, File.ReadAllText(backupHosts));
+                File.SetAttributes(etcHostsPath, FileAttributes.ReadOnly);
+            }
+            catch(Exception ex) {
+                MessageBox.Show(string.Format("还原Hosts失败：{0}", ex.Message), "温馨提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void refreshHostList() {
@@ -82,8 +110,6 @@ namespace HostSwitch {
         }
 
         private void handleUse(HostInfo host, bool isSilence = false) {
-            var syst = Environment.GetEnvironmentVariable("windir");
-            var hostPath = Path.Combine(syst, "system32\\drivers\\etc\\hosts");
             var hostContent = File.ReadAllText(host.FilePath);
             IList<string> noExistModules = new List<string>();
             IList<string> importModules = new List<string>();
@@ -127,9 +153,9 @@ namespace HostSwitch {
             }
 
             try {
-                File.SetAttributes(hostPath, FileAttributes.Normal);
-                File.WriteAllText(hostPath, hostContent);
-                File.SetAttributes(hostPath, FileAttributes.ReadOnly);
+                File.SetAttributes(etcHostsPath, FileAttributes.Normal);
+                File.WriteAllText(etcHostsPath, hostContent);
+                File.SetAttributes(etcHostsPath, FileAttributes.ReadOnly);
             }
             catch (Exception ex) {
                 MessageBox.Show("无法写入hosts文件，请去除hosts文件的只读属性！", "温馨提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -201,6 +227,10 @@ namespace HostSwitch {
 
         private void tsmtOut_Click(object sender, EventArgs e) {
             Application.Exit();
+        }
+
+        private void btnRestore_Click(object sender, EventArgs e) {
+            RestoreHosts();
         }
     }
 }

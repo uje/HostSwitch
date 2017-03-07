@@ -49,8 +49,10 @@
             this.cmsTray = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmtShow = new System.Windows.Forms.ToolStripMenuItem();
             this.exchargeList = new System.Windows.Forms.ToolStripMenuItem();
-            this.tbeName = new HostSwitch.Controls.TextBoxEdit();
+            this.cmstRestore = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmtOut = new System.Windows.Forms.ToolStripMenuItem();
+            this.tbeName = new HostSwitch.Controls.TextBoxEdit();
+            this.btnRestore = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gvList)).BeginInit();
             this.cmsTray.SuspendLayout();
             this.SuspendLayout();
@@ -214,22 +216,37 @@
             this.cmsTray.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmtShow,
             this.exchargeList,
+            this.cmstRestore,
             this.tsmtOut});
             this.cmsTray.Name = "cmsTray";
-            this.cmsTray.Size = new System.Drawing.Size(153, 92);
+            this.cmsTray.Size = new System.Drawing.Size(177, 114);
             // 
             // tsmtShow
             // 
             this.tsmtShow.Name = "tsmtShow";
-            this.tsmtShow.Size = new System.Drawing.Size(152, 22);
+            this.tsmtShow.Size = new System.Drawing.Size(176, 22);
             this.tsmtShow.Text = "显示窗口(&S)";
             this.tsmtShow.Click += new System.EventHandler(this.ShowWindow);
             // 
             // exchargeList
             // 
             this.exchargeList.Name = "exchargeList";
-            this.exchargeList.Size = new System.Drawing.Size(152, 22);
+            this.exchargeList.Size = new System.Drawing.Size(176, 22);
             this.exchargeList.Text = "HOST切换(&E)";
+            // 
+            // cmstRestore
+            // 
+            this.cmstRestore.Name = "cmstRestore";
+            this.cmstRestore.Size = new System.Drawing.Size(176, 22);
+            this.cmstRestore.Text = "还原到原始版本(&R)";
+            this.cmstRestore.Click += new System.EventHandler(this.btnRestore_Click);
+            // 
+            // tsmtOut
+            // 
+            this.tsmtOut.Name = "tsmtOut";
+            this.tsmtOut.Size = new System.Drawing.Size(176, 22);
+            this.tsmtOut.Text = "退出(&O)";
+            this.tsmtOut.Click += new System.EventHandler(this.tsmtOut_Click);
             // 
             // tbeName
             // 
@@ -245,18 +262,23 @@
             this.tbeName.Size = new System.Drawing.Size(623, 34);
             this.tbeName.TabIndex = 8;
             // 
-            // tsmtOut
+            // btnRestore
             // 
-            this.tsmtOut.Name = "tsmtOut";
-            this.tsmtOut.Size = new System.Drawing.Size(152, 22);
-            this.tsmtOut.Text = "退出(&O)";
-            this.tsmtOut.Click += new System.EventHandler(this.tsmtOut_Click);
+            this.btnRestore.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnRestore.Location = new System.Drawing.Point(134, 21);
+            this.btnRestore.Name = "btnRestore";
+            this.btnRestore.Size = new System.Drawing.Size(141, 44);
+            this.btnRestore.TabIndex = 12;
+            this.btnRestore.Text = "还原到原始版本";
+            this.btnRestore.UseVisualStyleBackColor = true;
+            this.btnRestore.Click += new System.EventHandler(this.btnRestore_Click);
             // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1226, 723);
+            this.Controls.Add(this.btnRestore);
             this.Controls.Add(this.labStatus);
             this.Controls.Add(this.tbContent);
             this.Controls.Add(this.button1);
@@ -294,6 +316,8 @@
         private System.Windows.Forms.ToolStripMenuItem exchargeList;
         private System.Windows.Forms.ToolStripMenuItem tsmtShow;
         private System.Windows.Forms.ToolStripMenuItem tsmtOut;
+        private System.Windows.Forms.Button btnRestore;
+        private System.Windows.Forms.ToolStripMenuItem cmstRestore;
     }
 }
 
